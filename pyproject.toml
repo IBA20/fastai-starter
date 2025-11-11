@@ -1,7 +1,7 @@
 [project]
-name = "fastai-starter"
-version = "0.1.0"
-description = "FastAI Starter Repository for backend developers."
+name = "fastai-dvmn"
+version = "0.1.1"
+description = "FastAPI educational project."
 readme = "README.md"
 requires-python = "==3.13.*"
 dependencies = [
