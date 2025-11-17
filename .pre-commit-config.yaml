@@ -13,6 +13,12 @@ repos:
         language: system
         pass_filenames: no
 
+      - id: format-ruff
+        name: ruff
+        entry: ruff format ./src
+        language: system
+        pass_filenames: no
+
       - id: linters-ruff
         name: ruff
         entry: ruff check ./src
