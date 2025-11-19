@@ -19,6 +19,12 @@ repos:
         language: system
         pass_filenames: no
 
+      - id: ruff-sort-imports
+        name: ruff
+        entry: ruff check --select I --fix ./src
+        language: system
+        pass_filenames: no
+
       - id: linters-ruff
         name: ruff
         entry: ruff check ./src

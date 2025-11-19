@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+
+from src.models import UserDetailsResponse
 
 router = APIRouter(prefix='/frontend-api')
 
@@ -18,18 +19,25 @@ async def hello(current_user: str | None = None):
     return {'message': 'Привет из бекенда!'}
 
 
-@router.post(
+@router.get(
     '/users/me',
     summary='Получить учетные данные пользователя',
+    response_description='json containing user data',
     tags=['user'],
+    response_model=UserDetailsResponse,
 )
-async def show_current_user():
+async def show_current_user() -> UserDetailsResponse:
+    """
+    Returns current user data\n
+    **no params**
+    """
     user_data = {
+        'username': 'user123',
         'email': 'example@example.com',
         'isActive': True,
         'profileId': '1',
-        'registeredAt': '2025-06-15T18:29:56+00:00',
-        'updatedAt': '2025-06-15T18:29:56+00:00',
-        'username': 'user123',
+        'registeredAt': '2025-06-15T18:29:56+03:00',
+        'updatedAt': '2025-06-15T18:29:56+03:00',
     }
-    return JSONResponse(content=user_data, status_code=200)
+    user = UserDetailsResponse(**user_data)
+    return user
