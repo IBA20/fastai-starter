@@ -26,10 +26,10 @@ UserName = Annotated[
 class UserDetailsResponse(BaseModel):
     username: UserName
     email: EmailStr = Field(..., description='User email')
-    isActive: bool = Field(..., description='Active user or not')
-    profileId: int = Field(..., description='User profile ID')
-    registeredAt: AwareDatetime = Field(..., description='Time of registration')
-    updatedAt: AwareDatetime = Field(..., description='Time of last user data change')
+    is_active: bool = Field(..., description='Active user or not')
+    profile_id: int = Field(..., description='User profile ID')
+    registered_at: AwareDatetime = Field(..., description='Time of registration')
+    updated_at: AwareDatetime = Field(..., description='Time of last user data change')
 
     model_config = ConfigDict(
         alias_generator=to_camel,
@@ -43,6 +43,91 @@ class UserDetailsResponse(BaseModel):
                     'profileId': 12132,
                     'registeredAt': '2025-06-15T18:29:56+00:00',
                     'updatedAt': '2025-06-15T18:29:56+00:00',
+                },
+            ],
+        },
+    )
+
+
+class CreateSiteRequest(BaseModel):
+    title: str | None = None
+    prompt: str
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [
+                {
+                    'prompt': 'Сайт любителей играть в домино',
+                    'title': 'Фан клуб игры в домино',
+                },
+            ],
+        },
+    )
+
+
+class SiteResponse(BaseModel):
+    id: int
+    title: str
+    prompt: str
+    html_code_url: str | None
+    html_code_download_url: str | None
+    screenshot_url: str | None
+    createdAt: AwareDatetime
+    updatedAt: AwareDatetime
+
+    model_config = ConfigDict(
+        alias_generator=to_camel,
+        populate_by_name=True,
+        json_schema_extra={
+            'examples': [
+                {
+                    'id': 1,
+                    'title': 'Фан клуб Домино',
+                    'prompt': 'Сайт любителей играть в домино',
+                    'htmlCodeUrl': 'http://example.com/media/index.html',
+                    'htmlCodeDownloadUrl': 'http://example.com/media/index.html?response-content-disposition=attachment',
+                    'screenshotUrl': 'http://example.com/media/index.png',
+                    'createdAt': '2025-06-15T18:29:56+00:00',
+                    'updatedAt': '2025-06-15T18:29:56+00:00',
+                },
+            ],
+        },
+    )
+
+
+class SitesGenerationRequest(BaseModel):
+    prompt: str
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [
+                {
+                    'prompt': 'Сайт любителей играть в домино',
+                },
+            ],
+        },
+    )
+
+
+class GeneratedSitesResponse(BaseModel):
+    sites: list[SiteResponse]
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            'examples': [
+                {
+                    'sites': [
+                        {
+                            'id': 1,
+                            'title': 'Фан клуб Домино',
+                            'prompt': 'Сайт любителей играть в домино',
+                            'htmlCodeUrl': 'http://example.com/media/index.html',
+                            'htmlCodeDownloadUrl': 'http://example.com/media/index.html?response-content-disposition=attachment',
+                            'screenshotUrl': 'http://example.com/media/index.png',
+                            'createdAt': '2025-06-15T18:29:56+00:00',
+                            'updatedAt': '2025-06-15T18:29:56+00:00',
+                        },
+                    ],
                 },
             ],
         },

@@ -14,19 +14,19 @@ repos:
         pass_filenames: no
 
       - id: format-ruff
-        name: ruff
+        name: ruff-format
         entry: ruff format ./src
         language: system
         pass_filenames: no
 
       - id: ruff-sort-imports
-        name: ruff
+        name: ruff-sort-imports
         entry: ruff check --select I --fix ./src
         language: system
         pass_filenames: no
 
       - id: linters-ruff
-        name: ruff
+        name: ruff-linters
         entry: ruff check ./src
         language: system
         pass_filenames: no
