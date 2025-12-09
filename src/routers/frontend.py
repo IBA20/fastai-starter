@@ -12,6 +12,7 @@ from src.models import (
     SitesGenerationRequest,
     UserDetailsResponse,
 )
+from src.settings import settings
 
 router = APIRouter(prefix='/frontend-api')
 
@@ -134,3 +135,13 @@ async def get_site(
         'updatedAt': '2025-06-15T18:29:56+00:00',
     }
     return SiteResponse(**created_site)
+
+
+@router.get('/settings')
+def get_settings():
+    return {
+        'db_host': settings.database.host,
+        'db_port': settings.database.port,
+        'db_user': settings.database.username,
+        'db_password': settings.database.password,
+    }

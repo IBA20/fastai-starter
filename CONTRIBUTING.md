@@ -72,6 +72,15 @@ pre-commit installed at .git/hooks/pre-commit
 git commit -m 'Message' --no-verify
 ```
 
+### Настройка переменных окружения
+
+В корне репозитория создайте файл .env и скопируйте туда содержимое файла example.env. Добавьте/отредактируйте значения переменных:
+- FASTAI_DEEPSEEK__BASE_URL - URL API DeepSeek, см. [документацию](https://api-docs.deepseek.com/quick_start/pricing), пример: `https://api.deepseek.com`
+- FASTAI_DEEPSEEK__MODEL - Название модели DeepSeek, см. [документацию](https://api-docs.deepseek.com/quick_start/pricing)
+- FASTAI_DEEPSEEK__API_KEY - Ваш АПИ-ключ, полученный при регистрации на DeepSeek
+- FASTAI_UNSPLASH__BASE_URL - URL API Unsplash, см. [документацию](https://unsplash.com/documentation#creating-a-developer-account), пример: `https://api.unsplash.com`
+- FASTAI_UNSPLASH__API_KEY - Ваш АПИ-ключ, полученный при регистрации на Unsplash
+
 ## Как вести разработку
 
 Код проекта находится в папке `/src`.
