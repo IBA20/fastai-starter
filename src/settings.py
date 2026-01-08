@@ -45,4 +45,3 @@ class AppSettings(BaseSettings):
 
 
 settings = AppSettings()
-print(settings.model_dump())

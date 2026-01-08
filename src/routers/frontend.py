@@ -1,9 +1,11 @@
-import asyncio
+import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+import anyio
 from fastapi import APIRouter, Path
 from fastapi.responses import PlainTextResponse, StreamingResponse
+from html_page_generator import AsyncDeepseekClient, AsyncPageGenerator, AsyncUnsplashClient
 
 from src.models import (
     CreateSiteRequest,
@@ -13,6 +15,8 @@ from src.models import (
     UserDetailsResponse,
 )
 from src.settings import settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix='/frontend-api')
 
@@ -77,16 +81,30 @@ async def generate_site(
     Код сайта будет транслироваться стримом по мере генерации.
     """
 
-    async def mock_content_generator():
-        yield f'Site ID {site_id}\n'
-        await asyncio.sleep(0.5)
-        yield f'{request.prompt}\n'
-        for chunk_no in range(10):
-            await asyncio.sleep(0.5)
-            yield f'text_chunk_no_{chunk_no}\n'
+    async def page_generator(user_prompt: str):
+        async with (
+            AsyncUnsplashClient.setup(
+                settings.unsplash.api_key,
+                timeout=settings.unsplash.connection_timeout,
+            ),
+            AsyncDeepseekClient.setup(
+                settings.deepseek.api_key.get_secret_value(),
+                settings.deepseek.base_url,
+                settings.deepseek.model,
+                timeout=settings.deepseek.connection_timeout,
+            ),
+        ):
+            generator = AsyncPageGenerator(debug_mode=settings.debug)
+            with anyio.CancelScope(shield=True):
+                async for chunk in generator(user_prompt):
+                    yield chunk
+
+                with open('frontend/media/index.html', 'w', encoding='utf8') as f:
+                    f.write(generator.html_page.html_code)
+                logger.debug('Файл успешно сохранён!')
 
     return StreamingResponse(
-        content=mock_content_generator(),
+        content=page_generator(request.prompt),
         media_type='text/plain',
     )
 
