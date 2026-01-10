@@ -5,6 +5,7 @@ description = "FastAPI educational project."
 readme = "README.md"
 requires-python = "==3.13.*"
 dependencies = [
+    "aioboto3>=15.5.0",
     "fastapi[standard]==0.115.12",
     "html-page-generator",
     "pydantic-settings>=2.12.0",
