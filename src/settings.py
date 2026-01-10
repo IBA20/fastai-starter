@@ -27,6 +27,16 @@ class UnsplashSettings(BaseSettings):
     connection_timeout: int = 20
 
 
+class StorageSettings(BaseSettings):
+    endpoint_url: str = 'http://localhost:9000'
+    bucket_name: str
+    access_key: SecretStr
+    secret_key: SecretStr
+    max_pool_connections: int = 50  # 50 параллельных операций
+    connect_timeout: int = 10  # 10 сек на подключение
+    read_timeout: int = 30  # 30 сек на чтение данных
+
+
 class AppSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file='.env',
@@ -42,6 +52,7 @@ class AppSettings(BaseSettings):
     debug: bool = False
     deepseek: DeepSeekSettings
     unsplash: UnsplashSettings
+    storage: StorageSettings
 
 
 settings = AppSettings()
