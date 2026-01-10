@@ -54,6 +54,14 @@ $ source .venv/bin/activate  # для Linux
 $ .\.venv\Scripts\activate  # Для Windows
 ```
 
+### Локальное развертывание хранилища S3
+Из папки проекта запустите команду:
+```shell
+$ docker compose -f docker-compose-minio.yml up -d
+```
+В браузере откройте веб-консоль minio по адресу http://localhost:9001/. В разделе Buckets создайте бакет с именем fastai (можено использовать свое имя). В совйствах бакета установите Access Policy: Public.
+В разделе Access keys создайте ключи доступа. Сохраните Access Key и  Secret Key (они понадобятся далее при настройке переменных окружения).
+
 ### Настройка pre-commit хуков
 
 В репозитории используются хуки [pre-commit](https://pre-commit.com/), чтобы автоматически запускать линтеры и автотесты.
@@ -80,6 +88,13 @@ git commit -m 'Message' --no-verify
 - FASTAI_DEEPSEEK__API_KEY - Ваш АПИ-ключ, полученный при регистрации на DeepSeek
 - FASTAI_UNSPLASH__BASE_URL - URL API Unsplash, см. [документацию](https://unsplash.com/documentation#creating-a-developer-account), пример: `https://api.unsplash.com`
 - FASTAI_UNSPLASH__API_KEY - Ваш АПИ-ключ, полученный при регистрации на Unsplash
+- FASTAI_STORAGE__ENDPOINT_URL - URL вашего хранилища S3
+- FASTAI_STORAGE__BUCKET_NAME - имя публичного (важно!) бакета для сохранения сгенерированных сайтов
+- FASTAI_STORAGE__ACCESS_KEY - Access key для доступа к хранилищу S3
+- FASTAI_STORAGE__SECRET_KEY - Secret key для доступа к хранилищу S3
+- FASTAI_STORAGE__MAX_POOL_CONNECTIONS - число параллельных операций
+- FASTAI_STORAGE__CONNECT_TIMEOUT - таймаут подключения
+- FASTAI_STORAGE__READ_TIMEOUT - таймаут чтения данных
 
 ## Как вести разработку
 

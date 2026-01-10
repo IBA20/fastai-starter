@@ -15,6 +15,7 @@ from src.models import (
     UserDetailsResponse,
 )
 from src.settings import settings
+from src.storage import upload_file_to_s3
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +59,10 @@ async def create_site(request: CreateSiteRequest):
         'id': 1,
         'title': 'Site title',
         'prompt': request.prompt,
-        'htmlCodeUrl': 'https://dvmn.org/media/filer_public/d1/4b/d14bb4e8-d8b4-49cb-928d-fd04ecae46da/index.html',
-        'htmlCodeDownloadUrl': 'https://dvmn.org/media/filer_public/d1/4b/d14bb4e8-d8b4-49cb-928d-fd04ecae46da/index.html?response-content-disposition=attachment',
-        'screenshotUrl': 'https://dvmn.org/tilda_assets/tild6435-3366-4037-b963-323530656465__devman_logo_heart_wi.svg',
+        'htmlCodeUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/index.html',
+        'htmlCodeDownloadUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}'
+        f'/data/index.html?response-content-disposition=attachment',
+        'screenshotUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/screenshot.png',
         'createdAt': created_at,
         'updatedAt': created_at,
     }
@@ -99,8 +101,7 @@ async def generate_site(
                 async for chunk in generator(user_prompt):
                     yield chunk
 
-                with open('frontend/media/index.html', 'w', encoding='utf8') as f:
-                    f.write(generator.html_page.html_code)
+                await upload_file_to_s3(generator.html_page.html_code, 'data/index.html')
                 logger.debug('Файл успешно сохранён!')
 
     return StreamingResponse(
@@ -122,9 +123,10 @@ async def get_sites():
                 'id': 1,
                 'title': 'Фан клуб Домино',
                 'prompt': 'Сайт любителей играть в домино',
-                'htmlCodeUrl': 'https://dvmn.org/media/filer_public/d1/4b/d14bb4e8-d8b4-49cb-928d-fd04ecae46da/index.html',
-                'htmlCodeDownloadUrl': 'https://dvmn.org/media/filer_public/d1/4b/d14bb4e8-d8b4-49cb-928d-fd04ecae46da/index.html?response-content-disposition=attachment',
-                'screenshotUrl': 'http://dvmn.org/media/index.png',
+                'htmlCodeUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/index.html',
+                'htmlCodeDownloadUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}'
+                f'/data/index.html?response-content-disposition=attachment',
+                'screenshotUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/screenshot.png',
                 'createdAt': '2025-06-15T18:29:56+00:00',
                 'updatedAt': '2025-06-15T18:29:56+00:00',
             },
@@ -146,9 +148,10 @@ async def get_site(
         'id': site_id,
         'title': 'Фан клуб Домино',
         'prompt': 'Сайт любителей играть в домино',
-        'htmlCodeUrl': 'https://dvmn.org/media/filer_public/d1/4b/d14bb4e8-d8b4-49cb-928d-fd04ecae46da/index.html',
-        'htmlCodeDownloadUrl': 'https://dvmn.org/media/filer_public/d1/4b/d14bb4e8-d8b4-49cb-928d-fd04ecae46da/index.html?response-content-disposition=attachment',
-        'screenshotUrl': 'http://dvmn.org/media/index.png',
+        'htmlCodeUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/index.html',
+        'htmlCodeDownloadUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data'
+        f'/index.html?response-content-disposition=attachment',
+        'screenshotUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/screenshot.png',
         'createdAt': '2025-06-15T18:29:56+00:00',
         'updatedAt': '2025-06-15T18:29:56+00:00',
     }
@@ -157,9 +160,4 @@ async def get_site(
 
 @router.get('/settings')
 def get_settings():
-    return {
-        'db_host': settings.database.host,
-        'db_port': settings.database.port,
-        'db_user': settings.database.username,
-        'db_password': settings.database.password,
-    }
+    return settings.model_dump()

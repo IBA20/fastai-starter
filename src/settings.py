@@ -32,9 +32,9 @@ class StorageSettings(BaseSettings):
     bucket_name: str
     access_key: SecretStr
     secret_key: SecretStr
-    max_pool_connections: int = 50  # 50 параллельных операций
-    connect_timeout: int = 10  # 10 сек на подключение
-    read_timeout: int = 30  # 30 сек на чтение данных
+    max_pool_connections: int = 50
+    connect_timeout: int = 10
+    read_timeout: int = 30
 
 
 class AppSettings(BaseSettings):
