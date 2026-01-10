@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import Field, PositiveInt, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -37,6 +39,15 @@ class StorageSettings(BaseSettings):
     read_timeout: int = 30
 
 
+class GotenbergSettings(BaseSettings):
+    base_url: str = 'https://demo.gotenberg.dev'
+    screenshot_width: int = 1000
+    screenshot_format: Literal['jpeg', 'png', 'webp'] = 'png'
+    max_connections: int = 5
+    wait_delay: int = 8
+    timeout: int = 20
+
+
 class AppSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file='.env',
@@ -53,6 +64,7 @@ class AppSettings(BaseSettings):
     deepseek: DeepSeekSettings
     unsplash: UnsplashSettings
     storage: StorageSettings
+    gotenberg: GotenbergSettings
 
 
 settings = AppSettings()

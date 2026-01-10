@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -15,7 +16,7 @@ from src.models import (
     UserDetailsResponse,
 )
 from src.settings import settings
-from src.storage import upload_file_to_s3
+from src.storage import save_screenshot, upload_file_to_s3
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +103,8 @@ async def generate_site(
                     yield chunk
 
                 await upload_file_to_s3(generator.html_page.html_code, 'data/index.html')
-                logger.debug('Файл успешно сохранён!')
+                logger.info('HTML успешно сохранён!')
+                asyncio.create_task(save_screenshot(generator.html_page.html_code))
 
     return StreamingResponse(
         content=page_generator(request.prompt),
