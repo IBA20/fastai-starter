@@ -158,8 +158,3 @@ async def get_site(
         'updatedAt': '2025-06-15T18:29:56+00:00',
     }
     return SiteResponse(**created_site)
-
-
-@router.get('/settings')
-def get_settings():
-    return settings.model_dump()

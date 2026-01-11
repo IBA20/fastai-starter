@@ -4,6 +4,7 @@ from typing import Literal
 import aioboto3
 import httpx
 from aiobotocore.config import AioConfig
+from aiobotocore.session import ClientCreatorContext
 from gotenberg_api import GotenbergServerError, ScreenshotHTMLRequest
 from httpx import Limits
 
@@ -12,7 +13,7 @@ from src.settings import settings
 logger = logging.getLogger(__name__)
 
 
-async def create_s3_client():
+async def create_s3_client() -> ClientCreatorContext:
     config = AioConfig(
         max_pool_connections=settings.storage.max_pool_connections,
         connect_timeout=settings.storage.connect_timeout,
@@ -34,7 +35,7 @@ async def upload_file_to_s3(
     s3_key: str,
     mime_type: str = 'text/html',
     content_disposition: Literal['attachment', 'inline'] = 'inline',
-):
+) -> None:
     upload_params = {
         'Bucket': settings.storage.bucket_name,
         'Key': s3_key,
@@ -44,11 +45,12 @@ async def upload_file_to_s3(
     }
 
     s3_client = await create_s3_client()
+    print(type(s3_client))
     async with s3_client as client:
         await client.put_object(**upload_params)
 
 
-async def save_screenshot(raw_html: str):
+async def save_screenshot(raw_html: str) -> None:
     try:
         async with httpx.AsyncClient(
             base_url=settings.gotenberg.base_url,
