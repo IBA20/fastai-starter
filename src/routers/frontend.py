@@ -20,7 +20,7 @@ from src.storage import save_screenshot, upload_file_to_s3
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix='/frontend-api')
+router = APIRouter()
 
 
 @router.get(
