@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, StringConstraints
+from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, PositiveInt, StringConstraints
 from pydantic.alias_generators import to_camel
 from pydantic.functional_validators import AfterValidator
 
@@ -27,7 +27,7 @@ class UserDetailsResponse(BaseModel):
     username: UserName
     email: EmailStr = Field(..., description='User email')
     is_active: bool = Field(..., description='Active user or not')
-    profile_id: int = Field(..., description='User profile ID')
+    profile_id: int = Field(..., gt=0, description='User profile ID')
     registered_at: AwareDatetime = Field(..., description='Time of registration')
     updated_at: AwareDatetime = Field(..., description='Time of last user data change')
 
@@ -66,12 +66,12 @@ class CreateSiteRequest(BaseModel):
 
 
 class SiteResponse(BaseModel):
-    id: int
+    id: PositiveInt
     title: str
     prompt: str
-    html_code_url: str | None
-    html_code_download_url: str | None
-    screenshot_url: str | None
+    html_code_url: HttpUrl | None
+    html_code_download_url: HttpUrl | None
+    screenshot_url: HttpUrl | None
     createdAt: AwareDatetime
     updatedAt: AwareDatetime
 
