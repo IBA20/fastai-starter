@@ -1,6 +1,6 @@
 from typing import Annotated, Literal
 
-from pydantic import AnyUrl, Field, HttpUrl, PositiveInt, SecretStr, StringConstraints
+from pydantic import AnyUrl, Field, HttpUrl, PositiveInt, SecretStr, StringConstraints, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,8 +10,16 @@ class DatabaseSettings(BaseSettings):
         description='Имя хоста Postgres',
     )
     port: PositiveInt = 5432
+    db: str = Field(
+        default='postgres',
+        description='Имя базы данных',
+    )
     username: str = 'postgres'
     password: SecretStr = 'postgres'
+
+    @computed_field
+    def database_url(self) -> str:
+        return f'postgres://{self.username}:{self.password}{self.host}:{self.port}/{self.db}'
 
 
 class DeepSeekSettings(BaseSettings):
