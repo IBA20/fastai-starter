@@ -4,7 +4,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import anyio
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Request
 from fastapi.responses import PlainTextResponse, StreamingResponse
 from html_page_generator import AsyncDeepseekClient, AsyncPageGenerator, AsyncUnsplashClient
 
@@ -54,12 +54,12 @@ async def show_current_user() -> UserDetailsResponse:
     tags=['Sites'],
     response_model=SiteResponse,
 )
-async def create_site(request: CreateSiteRequest):
+async def create_site(request_payload: CreateSiteRequest):
     created_at = datetime.now(ZoneInfo('Europe/Moscow')).replace(microsecond=0)
     created_site = {
         'id': 1,
         'title': 'Site title',
-        'prompt': request.prompt,
+        'prompt': request_payload.prompt,
         'htmlCodeUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/index.html',
         'htmlCodeDownloadUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}'
         f'/data/index.html?response-content-disposition=attachment',
@@ -77,8 +77,9 @@ async def create_site(request: CreateSiteRequest):
     response_class=PlainTextResponse,
 )
 async def generate_site(
+    request: Request,
     site_id: int = Path(..., gt=0, title='ID сайта', description='Должен быть положительным'),
-    request: SitesGenerationRequest | None = None,
+    request_payload: SitesGenerationRequest | None = None,
 ):
     """
     Код сайта будет транслироваться стримом по мере генерации.
@@ -102,12 +103,18 @@ async def generate_site(
                 async for chunk in generator(user_prompt):
                     yield chunk
 
-                await upload_file_to_s3(generator.html_page.html_code, 'data/index.html')
+                await upload_file_to_s3(request.app.state.client, generator.html_page.html_code, 'data/index.html')
                 logger.info('HTML успешно сохранён!')
-                asyncio.create_task(save_screenshot(generator.html_page.html_code))
+                asyncio.create_task(
+                    save_screenshot(
+                        request.app.state.client,
+                        generator.html_page.html_code,
+                        'data/screenshot.png',
+                    ),
+                )
 
     return StreamingResponse(
-        content=page_generator(request.prompt),
+        content=page_generator(request_payload.prompt),
         media_type='text/plain',
     )
 
