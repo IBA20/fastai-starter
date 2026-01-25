@@ -9,6 +9,7 @@ from fastapi.responses import PlainTextResponse, StreamingResponse
 from html_page_generator import AsyncDeepseekClient, AsyncPageGenerator, AsyncUnsplashClient
 
 from src.models import (
+    DEFAULT_SITE_EXAMPLE,
     CreateSiteRequest,
     GeneratedSitesResponse,
     SiteResponse,
@@ -127,19 +128,7 @@ async def generate_site(
 )
 async def get_sites():
     created_sites = {
-        'sites': [
-            {
-                'id': 1,
-                'title': 'Фан клуб Домино',
-                'prompt': 'Сайт любителей играть в домино',
-                'htmlCodeUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/index.html',
-                'htmlCodeDownloadUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}'
-                f'/data/index.html?response-content-disposition=attachment',
-                'screenshotUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/screenshot.png',
-                'createdAt': '2025-06-15T18:29:56+00:00',
-                'updatedAt': '2025-06-15T18:29:56+00:00',
-            },
-        ],
+        'sites': [DEFAULT_SITE_EXAMPLE],
     }
     return GeneratedSitesResponse(**created_sites)
 
@@ -153,15 +142,4 @@ async def get_sites():
 async def get_site(
     site_id: int = Path(..., gt=0, title='ID сайта', description='Должен быть положительным'),
 ):
-    created_site = {
-        'id': site_id,
-        'title': 'Фан клуб Домино',
-        'prompt': 'Сайт любителей играть в домино',
-        'htmlCodeUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/index.html',
-        'htmlCodeDownloadUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data'
-        f'/index.html?response-content-disposition=attachment',
-        'screenshotUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/screenshot.png',
-        'createdAt': '2025-06-15T18:29:56+00:00',
-        'updatedAt': '2025-06-15T18:29:56+00:00',
-    }
-    return SiteResponse(**created_site)
+    return SiteResponse(**DEFAULT_SITE_EXAMPLE)

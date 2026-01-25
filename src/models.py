@@ -4,6 +4,20 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, Http
 from pydantic.alias_generators import to_camel
 from pydantic.functional_validators import AfterValidator
 
+from src.settings import settings
+
+DEFAULT_SITE_EXAMPLE = {
+    'id': 1,
+    'title': 'Фан клуб Домино',
+    'prompt': 'Сайт любителей играть в домино',
+    'htmlCodeUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/index.html',
+    'htmlCodeDownloadUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}'
+    f'/data/index.html?response-content-disposition=attachment',
+    'screenshotUrl': f'{settings.storage.endpoint_url}{settings.storage.bucket_name}/data/screenshot.png',
+    'createdAt': '2025-06-15T18:29:56+00:00',
+    'updatedAt': '2025-06-15T18:29:56+00:00',
+}
+
 
 def strip_whitespace(value: str) -> str:
     return value.strip()
@@ -76,18 +90,7 @@ class SiteResponse(BaseModel):
         alias_generator=to_camel,
         populate_by_name=True,
         json_schema_extra={
-            'examples': [
-                {
-                    'id': 1,
-                    'title': 'Фан клуб Домино',
-                    'prompt': 'Сайт любителей играть в домино',
-                    'htmlCodeUrl': 'http://example.com/media/index.html',
-                    'htmlCodeDownloadUrl': 'http://example.com/media/index.html?response-content-disposition=attachment',
-                    'screenshotUrl': 'http://example.com/media/index.png',
-                    'createdAt': '2025-06-15T18:29:56+00:00',
-                    'updatedAt': '2025-06-15T18:29:56+00:00',
-                },
-            ],
+            'examples': [DEFAULT_SITE_EXAMPLE],
         },
     )
 
@@ -113,18 +116,7 @@ class GeneratedSitesResponse(BaseModel):
         json_schema_extra={
             'examples': [
                 {
-                    'sites': [
-                        {
-                            'id': 1,
-                            'title': 'Фан клуб Домино',
-                            'prompt': 'Сайт любителей играть в домино',
-                            'htmlCodeUrl': 'http://example.com/media/index.html',
-                            'htmlCodeDownloadUrl': 'http://example.com/media/index.html?response-content-disposition=attachment',
-                            'screenshotUrl': 'http://example.com/media/index.png',
-                            'createdAt': '2025-06-15T18:29:56+00:00',
-                            'updatedAt': '2025-06-15T18:29:56+00:00',
-                        },
-                    ],
+                    'sites': [DEFAULT_SITE_EXAMPLE],
                 },
             ],
         },
