@@ -1,8 +1,7 @@
 from typing import Annotated
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, PositiveInt
+from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, PositiveInt, StringConstraints
 from pydantic.alias_generators import to_camel
-from pydantic.functional_validators import AfterValidator
 
 from src.settings import settings
 
@@ -19,15 +18,10 @@ DEFAULT_SITE_EXAMPLE = {
 }
 
 
-def strip_whitespace(value: str) -> str:
-    return value.strip()
-
-
 UserName = Annotated[
     str,
-    AfterValidator(strip_whitespace),
+    StringConstraints(max_length=254, strip_whitespace=True),
     Field(
-        max_length=254,
         description='Unique user name',
         examples=['ivan', 'alex123'],
     ),
