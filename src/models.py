@@ -72,8 +72,8 @@ class SiteResponse(BaseModel):
     html_code_url: HttpUrl | None
     html_code_download_url: HttpUrl | None
     screenshot_url: HttpUrl | None
-    createdAt: AwareDatetime
-    updatedAt: AwareDatetime
+    created_at: AwareDatetime
+    updated_at: AwareDatetime
 
     model_config = ConfigDict(
         alias_generator=to_camel,
