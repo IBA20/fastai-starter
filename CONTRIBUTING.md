@@ -60,7 +60,7 @@ $ .\.venv\Scripts\activate  # Для Windows
 $ docker compose -f docker-compose-minio.yml up -d
 ```
 В браузере откройте веб-консоль minio по адресу http://localhost:9001/. В разделе Buckets создайте бакет с именем fastai (можено использовать свое имя). В совйствах бакета установите Access Policy: Public.
-В разделе Access keys создайте ключи доступа. Сохраните Access Key и  Secret Key (они понадобятся далее при настройке переменных окружения).
+В разделе Access keys создайте ключи доступа. Сохраните Access Key и Secret Key (они понадобятся далее при настройке переменных окружения).
 
 ### Настройка pre-commit хуков
 
@@ -142,9 +142,7 @@ $ make list
 ```
 
 ### Локальное развертывание фронтэнда
-1. Скачать [архив с фронтэндом](https://dvmn.org/filer/canonical/1750917110/1035/) 
-2. Распаковать архив в корневую папку проекта
-3. В папке фронтэнда (frontend/) создать файл frontend-settings.json со следующим содержимым:
+В папке фронтэнда (frontend/) создать файл frontend-settings.json со следующим содержимым:
 ```json
 {
     "backendBaseUrl": "/frontend-api/"

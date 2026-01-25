@@ -55,7 +55,7 @@ class UserDetailsResponse(BaseModel):
 
 
 class CreateSiteRequest(BaseModel):
-    title: str | None = None
+    title: str = 'Untitled'
     prompt: str
 
     model_config = ConfigDict(
