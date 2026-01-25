@@ -1,15 +1,12 @@
 from typing import Annotated
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, PositiveInt, StringConstraints
+from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, PositiveInt
 from pydantic.alias_generators import to_camel
 from pydantic.functional_validators import AfterValidator
 
 
 def strip_whitespace(value: str) -> str:
     return value.strip()
-
-
-PasswordStr = Annotated[str, StringConstraints(min_length=8, max_length=30)]
 
 
 UserName = Annotated[
