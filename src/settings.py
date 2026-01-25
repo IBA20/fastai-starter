@@ -71,6 +71,13 @@ class GotenbergSettings(BaseSettings):
 
 
 class AppSettings(BaseSettings):
+    database: DatabaseSettings
+    debug: bool = False
+    deepseek: DeepSeekSettings
+    unsplash: UnsplashSettings
+    storage: StorageSettings
+    gotenberg: GotenbergSettings
+
     model_config = SettingsConfigDict(
         env_file='.env',
         env_file_encoding='utf-8',
@@ -80,13 +87,6 @@ class AppSettings(BaseSettings):
         validate_default=True,
         extra='ignore',
     )
-
-    database: DatabaseSettings
-    debug: bool = False
-    deepseek: DeepSeekSettings
-    unsplash: UnsplashSettings
-    storage: StorageSettings
-    gotenberg: GotenbergSettings
 
 
 settings = AppSettings()
