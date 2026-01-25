@@ -104,13 +104,17 @@ async def generate_site(
                 async for chunk in generator(user_prompt):
                     yield chunk
 
-                await upload_file_to_s3(request.app.state.client, generator.html_page.html_code, 'data/index.html')
+                await upload_file_to_s3(
+                    request.app.state.client,
+                    generator.html_page.html_code,
+                    f'data/index_{site_id}.html',
+                )
                 logger.info('HTML успешно сохранён!')
                 asyncio.create_task(
                     save_screenshot(
                         request.app.state.client,
                         generator.html_page.html_code,
-                        'data/screenshot.png',
+                        f'data/screenshot_{site_id}.png',
                     ),
                 )
 
