@@ -1,13 +1,11 @@
-import asyncio
 import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-import anyio
 from fastapi import APIRouter, Path, Request
 from fastapi.responses import PlainTextResponse, StreamingResponse
-from html_page_generator import AsyncDeepseekClient, AsyncPageGenerator, AsyncUnsplashClient
 
+from src.generators import page_generator
 from src.models import (
     DEFAULT_SITE_EXAMPLE,
     CreateSiteRequest,
@@ -17,7 +15,6 @@ from src.models import (
     UserDetailsResponse,
 )
 from src.settings import settings
-from src.storage import save_screenshot, upload_file_to_s3
 
 logger = logging.getLogger(__name__)
 
@@ -86,40 +83,8 @@ async def generate_site(
     Код сайта будет транслироваться стримом по мере генерации.
     """
 
-    async def page_generator(user_prompt: str):
-        async with (
-            AsyncUnsplashClient.setup(
-                settings.unsplash.api_key,
-                timeout=settings.unsplash.connection_timeout,
-            ),
-            AsyncDeepseekClient.setup(
-                settings.deepseek.api_key.get_secret_value(),
-                settings.deepseek.base_url,
-                settings.deepseek.model,
-                timeout=settings.deepseek.connection_timeout,
-            ),
-        ):
-            generator = AsyncPageGenerator(debug_mode=settings.debug)
-            with anyio.CancelScope(shield=True):
-                async for chunk in generator(user_prompt):
-                    yield chunk
-
-                await upload_file_to_s3(
-                    request.app.state.client,
-                    generator.html_page.html_code,
-                    f'data/index_{site_id}.html',
-                )
-                logger.info('HTML успешно сохранён!')
-                asyncio.create_task(
-                    save_screenshot(
-                        request.app.state.client,
-                        generator.html_page.html_code,
-                        f'data/screenshot_{site_id}.png',
-                    ),
-                )
-
     return StreamingResponse(
-        content=page_generator(request_payload.prompt),
+        content=page_generator(request, site_id, request_payload.prompt),
         media_type='text/plain',
     )
 

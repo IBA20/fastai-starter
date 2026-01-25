@@ -49,7 +49,7 @@ async def upload_file_to_s3(
     await client.put_object(**upload_params)
 
 
-async def save_screenshot(s3_client: AioBaseClient, raw_html: str, s3_key: str) -> None:
+async def get_screenshot(raw_html: str) -> bytes | None:
     try:
         async with httpx.AsyncClient(
             base_url=settings.gotenberg.base_url,
@@ -62,13 +62,19 @@ async def save_screenshot(s3_client: AioBaseClient, raw_html: str, s3_key: str) 
                 format=settings.gotenberg.screenshot_format,
                 wait_delay=settings.gotenberg.wait_delay,
             ).asend(client)
-
-        await upload_file_to_s3(
-            s3_client,
-            screenshot_bytes,
-            s3_key,
-            mime_type='image/png',
-        )
-        logger.info('Скриншот успешно сохранён!')
+        return screenshot_bytes
     except GotenbergServerError as exc:
         logger.error('Failed to save screenshot: %s', exc)
+
+
+async def save_screenshot(s3_client: AioBaseClient, raw_html: str, s3_key: str) -> None:
+    screenshot_bytes = await get_screenshot(raw_html)
+    if not screenshot_bytes:
+        return
+    await upload_file_to_s3(
+        s3_client,
+        screenshot_bytes,
+        s3_key,
+        mime_type='image/png',
+    )
+    logger.info('Скриншот успешно сохранён!')
