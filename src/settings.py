@@ -49,7 +49,7 @@ class UnsplashSettings(BaseSettings):
 
 
 class StorageSettings(BaseSettings):
-    endpoint_url: str = Field(default='http://localhost:9000', description='URL хранилища S3')
+    endpoint_url: HttpUrl = Field(default='http://localhost:9000', description='URL хранилища S3')
     bucket_name: str = Field(min_length=1, description='Имя бакета S3')
     access_key: SecretStr = Field(min_length=1, description='Ключ доступа хранилища S3')
     secret_key: SecretStr = Field(min_length=1, description='Секретный ключ хранилища S3')

@@ -4,8 +4,8 @@ services:
     container_name: minio
     restart: unless-stopped
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "9900:9000"
+      - "9901:9001"
     volumes:
       - minio-storage:/data
       - minio-config:/root/.minio

@@ -26,7 +26,7 @@ async def create_s3_client() -> ClientCreatorContext:
     )
     return session.client(
         's3',
-        endpoint_url=settings.storage.endpoint_url,
+        endpoint_url=settings.storage.endpoint_url.encoded_string(),
         config=config,
     )
 
@@ -52,7 +52,7 @@ async def upload_file_to_s3(
 async def get_screenshot(raw_html: str) -> bytes | None:
     try:
         async with httpx.AsyncClient(
-            base_url=settings.gotenberg.base_url,
+            base_url=settings.gotenberg.base_url.encoded_string(),
             timeout=settings.gotenberg.timeout,
             limits=Limits(max_connections=settings.gotenberg.max_connections),
         ) as client:

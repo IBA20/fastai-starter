@@ -11,9 +11,9 @@ from src.storage import create_s3_client
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     _client = await create_s3_client()
-    app.state.client = await _client.__aenter__()  # noqa: PLC2801
-    yield
-    await app.state.client.__aexit__(None, None, None)
+    async with _client as s3_client:
+        app.state.client = s3_client
+        yield
 
 
 app = FastAPI(

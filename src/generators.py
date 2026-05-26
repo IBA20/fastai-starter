@@ -18,7 +18,7 @@ async def page_generator(request, site_id, user_prompt: str):
         ),
         AsyncDeepseekClient.setup(
             settings.deepseek.api_key.get_secret_value(),
-            settings.deepseek.base_url,
+            settings.deepseek.base_url.encoded_string(),
             settings.deepseek.model,
             timeout=settings.deepseek.connection_timeout,
         ),
