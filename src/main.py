@@ -7,6 +7,7 @@ from html_page_generator import AsyncDeepseekClient, AsyncUnsplashClient
 from httpx import Limits
 
 from src.routers.frontend import router as frontend_router
+from src.routers.users import router as users_router
 from src.settings import settings
 from src.storage import create_s3_client
 
@@ -49,4 +50,5 @@ app = FastAPI(
 )
 
 app.include_router(router=frontend_router)
+app.include_router(router=users_router)
 app.mount('/', StaticFiles(directory='frontend/', html=True), name='site')
