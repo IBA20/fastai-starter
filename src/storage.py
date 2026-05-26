@@ -2,12 +2,9 @@ import logging
 from typing import Literal
 
 import aioboto3
-import httpx
 from aiobotocore.client import AioBaseClient
 from aiobotocore.config import AioConfig
 from aiobotocore.session import ClientCreatorContext
-from gotenberg_api import GotenbergServerError, ScreenshotHTMLRequest
-from httpx import Limits
 
 from src.settings import settings
 
@@ -47,34 +44,3 @@ async def upload_file_to_s3(
     }
 
     await client.put_object(**upload_params)
-
-
-async def get_screenshot(raw_html: str) -> bytes | None:
-    try:
-        async with httpx.AsyncClient(
-            base_url=settings.gotenberg.base_url.encoded_string(),
-            timeout=settings.gotenberg.timeout,
-            limits=Limits(max_connections=settings.gotenberg.max_connections),
-        ) as client:
-            screenshot_bytes = await ScreenshotHTMLRequest(
-                index_html=raw_html,
-                width=settings.gotenberg.screenshot_width,
-                format=settings.gotenberg.screenshot_format,
-                wait_delay=settings.gotenberg.wait_delay,
-            ).asend(client)
-        return screenshot_bytes
-    except GotenbergServerError as exc:
-        logger.error('Failed to save screenshot: %s', exc)
-
-
-async def save_screenshot(s3_client: AioBaseClient, raw_html: str, s3_key: str) -> None:
-    screenshot_bytes = await get_screenshot(raw_html)
-    if not screenshot_bytes:
-        return
-    await upload_file_to_s3(
-        s3_client,
-        screenshot_bytes,
-        s3_key,
-        mime_type='image/png',
-    )
-    logger.info('Скриншот успешно сохранён!')

@@ -4,8 +4,9 @@ import logging
 import anyio
 from html_page_generator import AsyncDeepseekClient, AsyncPageGenerator, AsyncUnsplashClient
 
+from src.screenshot_handler import save_screenshot
 from src.settings import settings
-from src.storage import save_screenshot, upload_file_to_s3
+from src.storage import upload_file_to_s3
 
 logger = logging.getLogger(__name__)
 
