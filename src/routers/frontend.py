@@ -86,6 +86,7 @@ async def generate_site(
     return StreamingResponse(
         content=generate_page(
             request.app.state.s3_client,
+            request.app.state.httpx_client,
             site_id,
             request_payload.prompt,
         ),

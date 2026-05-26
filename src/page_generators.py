@@ -3,10 +3,10 @@ from collections.abc import AsyncGenerator
 
 import anyio
 from aiobotocore.client import AioBaseClient
-from gotenberg_api import GotenbergServerError
+from gotenberg_api import GotenbergServerError, ScreenshotHTMLRequest
 from html_page_generator import AsyncPageGenerator
+from httpx import AsyncClient
 
-from src.gotenberg_client import get_screenshot
 from src.settings import settings
 from src.storage import upload_file_to_s3
 
@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 async def generate_page(
     s3_client: AioBaseClient,
+    httpx_client: AsyncClient,
     site_id: int,
     user_prompt: str,
 ) -> AsyncGenerator:
@@ -30,7 +31,12 @@ async def generate_page(
                 f'data/index_{site_id}.html',
             )
             logger.info('HTML успешно сохранён!')
-            screenshot_bytes = await get_screenshot(generator.html_page.html_code)
+            screenshot_bytes = await ScreenshotHTMLRequest(
+                index_html=generator.html_page.html_code,
+                width=settings.gotenberg.screenshot_width,
+                format=settings.gotenberg.screenshot_format,
+                wait_delay=settings.gotenberg.wait_delay,
+            ).asend(httpx_client)
             if not screenshot_bytes:
                 return
             await upload_file_to_s3(
