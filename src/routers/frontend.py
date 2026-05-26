@@ -5,7 +5,6 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Path, Request
 from fastapi.responses import PlainTextResponse, StreamingResponse
 
-from src.generators import page_generator
 from src.models import (
     DEFAULT_SITE_EXAMPLE,
     CreateSiteRequest,
@@ -14,6 +13,7 @@ from src.models import (
     SitesGenerationRequest,
     UserDetailsResponse,
 )
+from src.page_generators import generate_page
 from src.settings import settings
 
 logger = logging.getLogger(__name__)
@@ -84,7 +84,11 @@ async def generate_site(
     """
 
     return StreamingResponse(
-        content=page_generator(request, site_id, request_payload.prompt),
+        content=generate_page(
+            request.app.state.s3_client,
+            site_id,
+            request_payload.prompt,
+        ),
         media_type='text/plain',
     )
 
